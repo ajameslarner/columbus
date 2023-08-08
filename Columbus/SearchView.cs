@@ -108,7 +108,16 @@ namespace Columbus
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            await SearchForFilesAsync(folderPath, keyword, cancellationToken);
+            try
+            {
+
+                await SearchForFilesAsync(folderPath, keyword, cancellationToken);
+
+            }
+            catch (UnauthorizedAccessException)
+            {
+                //MessageBox.Show("You don't have permission to access the specified directory.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             btnCancelSearch.Enabled = false; // Disable the "Cancel" button after the search
             btnSearch.Enabled = true; // Enable the "Search" button after the search is completed

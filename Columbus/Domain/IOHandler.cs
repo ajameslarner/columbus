@@ -26,15 +26,18 @@ namespace Columbus.Domain
             var uniqueFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             await Task.Yield();
-            foreach (string file in _directoryWrapper.EnumerateFiles(folderPath, searchPattern, searchOption))
+
+            var enumerable = new FileSystemEnumerable(new DirectoryInfo(folderPath), searchPattern, searchOption);
+
+            foreach (var file in enumerable)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                string fileName = string.Empty;
+                string fileName;
 
                 try
                 {
-                    fileName = _pathWrapper.GetFileName(file);
+                    fileName = _pathWrapper.GetFileName(file.Name);
                     string lowerCaseFileName = fileName.ToLower();
 
                     if (unique && !uniqueFileNames.Add(lowerCaseFileName))
@@ -45,10 +48,10 @@ namespace Columbus.Domain
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    fileName = "Blocked file.";
+                    continue;
                 }
 
-                yield return fileName;
+                yield return file.FullName;
             }
         }
     }

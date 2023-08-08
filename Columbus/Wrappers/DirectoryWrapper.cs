@@ -11,6 +11,7 @@ namespace Columbus.Wrappers
         IEnumerable<string> EnumerateFiles(string path);
         IEnumerable<string> EnumerateFiles(string path, string searchPattern);
         IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption option);
+        IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption option);
     }
     internal class DirectoryWrapper : IDirectoryWrapper
     {
@@ -26,14 +27,12 @@ namespace Columbus.Wrappers
 
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption option)
         {
-            try
-            {
-                return Directory.EnumerateFiles(path, searchPattern, option);
-            }
-            catch (UnauthorizedAccessException ex)
-            { 
-                return Enumerable.Empty<string>();
-            }
+            return Directory.GetFiles(path, searchPattern, option);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption option)
+        {
+            return Directory.EnumerateDirectories(path, searchPattern, option);
         }
     }
 }
